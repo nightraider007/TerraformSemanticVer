@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Terraform ~&gt; Version Range Quiz - Version 0.3.1 ~ Beta</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 650px; margin: 2rem auto; }
+  label { display: block; margin: 0.5rem 0 0.2rem; }
+  input[type="number"] { width: 60px; padding: 5px; margin-right: 10px; }
+  input[readonly] { background: #eee; }
+  button { margin-top: 1rem; padding: 0.5rem 1rem; }
+  .result { margin-top: 1rem; font-weight: bold; }
+  .explanation { margin-top: 1rem; font-style: italic; color: #444; white-space: pre-wrap; }
+  .row { margin-bottom: 1rem; }
+  .inline-label { display: inline-block; width: 70px; }
+  code { background: #f4f4f4; padding: 0 4px; border-radius: 3px; }
+  a { color: #007acc; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<h2>
+  Terraform ~&gt; Version Range Quiz 🚀🎮<br />
+  Version 0.3.1 ~ Beta 🐞😄
+</h2>
+
+<p>
+  <a href="https://doublex-nwankou.atlassian.net/wiki/pages/resumedraft.action?draftId=75956406&draftShareId=50e357f7-c05c-4873-8ca5-ff3922fb1472" target="_blank" rel="noopener noreferrer">
+    Why Doublex says to learn this
+  </a>
+</p>
+
+<p>
+  <a href="https://semver.org/" target="_blank" rel="noopener noreferrer">
+    Why you need to learn The Semantic Versioning specification by Tom Preston-Werner, inventor of Gravatar and cofounder of GitHub.
+  </a>
+</p>
+
+<section style="background:#f9f9f9; border:1px solid #ccc; padding:1rem; margin-bottom:1.5rem; border-radius:5px; max-width:600px;">
+  <h3>How to Play the Version Range Quiz</h3>
+  <ol>
+    <li>Enter a version by filling in the Major, Minor, and Patch boxes at the top. You can fill just Major, or Major + Minor, or all three parts.</li>
+    <li>Click <strong>“Show Left Bound”</strong> to see the minimum version (left bound) that your constraint includes.</li>
+    <li>Enter the expected right bound (exclusive upper limit) by filling Major, Minor, and Patch in the right bound boxes.</li>
+    <li>Click <strong>“Check Answer”</strong> to see if you got the right range.</li>
+    <li>If you get stuck, click <strong>“Show Answer”</strong> to reveal the correct right bound and a detailed explanation.</li>
+    <li>Use <strong>“Generate Random”</strong> to try random versions and practice different scenarios.</li>
+  </ol>
+  <p>
+    This game helps you understand how the Terraform <code>~&gt;</code> (pessimistic) version operator defines safe version ranges!
+  </p>
+</section>
+
+<div class="row">
+  <span class="inline-label">Input Version:</span>
+  <input type="number" id="inputMajor" min="0" placeholder="Major" />
+  <input type="number" id="inputMinor" min="0" placeholder="Minor" />
+  <input type="number" id="inputPatch" min="0" placeholder="Patch" />
+  <button onclick="generateRandomVersion()">Generate Random</button>
+  <button onclick="showLeftBound()">Show Left Bound</button>
+</div>
+
+<div class="row">
+  <span class="inline-label">Left Bound:</span>
+  <input type="number" id="leftMajor" readonly />
+  <input type="number" id="leftMinor" readonly />
+  <input type="number" id="leftPatch" readonly />
+</div>
+
+<form id="rightBoundForm" style="display:none;" onsubmit="return checkRightBound(event)">
+  <div class="row">
+    <span class="inline-label">Right Bound:</span>
+    <input type="number" id="rightMajor" min="0" required />
+    <input type="number" id="rightMinor" min="0" required />
+    <input type="number" id="rightPatch" min="0" required />
+  </div>
+  <button type="submit">Check Answer</button>
+  <button type="button" onclick="showAnswer()">Show Answer</button>
+</form>
+
+<div id="result" class="result"></div>
+<div id="explanation" class="explanation"></div>
+
+<script>
+  let expectedRightBound = null;
+  let expectedLeftBound = null;
+  let inputPartsLength = 0;
+
+  function parseInputVersion() {
+    const major = parseInt(document.getElementById('inputMajor').value);
+    const minorRaw = document.getElementById('inputMinor').value;
+    const patchRaw = document.getElementById('inputPatch').value;
+
+    if (isNaN(major)) {
+      alert('Major version is required and must be a number.');
+      return null;
+    }
+
+    inputPartsLength = 1;
+    let minor = 0, patch = 0;
+
+    if (minorRaw !== '') {
+      minor = parseInt(minorRaw);
+      if (isNaN(minor)) {
+        alert('Minor version must be a number.');
+        return null;
+      }
+      inputPartsLength = 2;
+    }
+
+    if (patchRaw !== '') {
+      patch = parseInt(patchRaw);
+      if (isNaN(patch)) {
+        alert('Patch version must be a number.');
+        return null;
+      }
+      inputPartsLength = 3;
+    }
+
+    return [major, minor, patch];
+  }
+
+  function incrementVersion(major, minor, patch, index) {
+    if (index === 0) {
+      return [major + 1, 0, 0];
+    } else if (index === 1) {
+      return [major, minor + 1, 0];
+    } else {
+      return [major, minor, patch + 1];
+    }
+  }
+
+  function showLeftBound() {
+    const version = parseInputVersion();
+    if (!version) return;
+
+    expectedLeftBound = version;
+
+    document.getElementById('leftMajor').value = version[0];
+    document.getElementById('leftMinor').value = version[1];
+    document.getElementById('leftPatch').value = version[2];
+
+    expectedRightBound = computeRightBound(version, inputPartsLength);
+
+    document.getElementById('rightBoundForm').style.display = 'block';
+    document.getElementById('rightMajor').value = '';
+    document.getElementById('rightMinor').value = '';
+    document.getElementById('rightPatch').value = '';
+
+    document.getElementById('result').innerText = '';
+    document.getElementById('explanation').innerText = '';
+  }
+
+  function computeRightBound([major, minor, patch], partsCount) {
+    if (partsCount === 3) {
+      return incrementVersion(major, minor, patch, 1);
+    } else if (partsCount === 2) {
+      return incrementVersion(major, minor, patch, 0);
+    } else {
+      return incrementVersion(major, 0, 0, 0);
+    }
+  }
+
+  function formatVersion(arr) {
+    return arr.join('.');
+  }
+
+  function checkRightBound(event) {
+    event.preventDefault();
+
+    const major = parseInt(document.getElementById('rightMajor').value);
+    const minor = parseInt(document.getElementById('rightMinor').value);
+    const patch = parseInt(document.getElementById('rightPatch').value);
+
+    if (!expectedRightBound) {
+      alert('Please enter and show the left bound first.');
+      return false;
+    }
+
+    const userRightBound = [major, minor, patch];
+
+    const correct =
+      userRightBound[0] === expectedRightBound[0] &&
+      userRightBound[1] === expectedRightBound[1] &&
+      userRightBound[2] === expectedRightBound[2];
+
+    if (correct) {
+      document.getElementById('result').innerText = `✅ Correct! Right bound is < ${formatVersion(userRightBound)}`;
+      document.getElementById('explanation').innerText = '';
+    } else {
+      document.getElementById('result').innerText = `❌ Incorrect. Try again or click 'Show Answer'.`;
+      document.getElementById('explanation').innerText = '';
+    }
+
+    return false;
+  }
+
+  function showAnswer() {
+    if (!expectedRightBound || !expectedLeftBound) {
+      alert('Please enter and show the left bound first.');
+      return;
+    }
+
+    document.getElementById('rightMajor').value = expectedRightBound[0];
+    document.getElementById('rightMinor').value = expectedRightBound[1];
+    document.getElementById('rightPatch').value = expectedRightBound[2];
+
+    const leftVersion = formatVersion(expectedLeftBound);
+    const rightVersion = formatVersion(expectedRightBound);
+
+    document.getElementById('result').innerText = `ℹ️ Answer revealed: Right bound is < ${rightVersion}`;
+
+    // Verbose explanation including Terraform style syntax and range concept
+    document.getElementById('explanation').innerText =
+      `The Terraform constraint syntax:\n` +
+      `  version = "~> ${leftVersion}"\n\n` +
+      `Means the allowed version range is:\n` +
+      `  >= ${leftVersion} (inclusive)\n` +
+      `  <  ${rightVersion} (exclusive)\n\n` +
+      `This defines a "between" operator:\n` +
+      `  versions allowed are >= ${leftVersion} and < ${rightVersion}.\n\n` +
+      `How the right bound is computed:\n` +
+      `  - If the input has 3 parts (major.minor.patch), the minor version is incremented.\n` +
+      `  - If the input has 2 parts (major.minor), the major version is incremented.\n` +
+      `  - If the input has 1 part (major), the major version is incremented.\n\n` +
+      `This means the patch part floats within the minor version range,\n` +
+      `and minor/major updates are blocked to avoid breaking changes.\n\n` +
+      `Using this constraint ensures your dependencies get safe updates,\n` +
+      `like bug fixes, without risking incompatibility from bigger version jumps.`;
+  }
+
+  function generateRandomVersion() {
+    const major = Math.floor(Math.random() * 5) + 1; // 1 - 5
+    const minor = Math.floor(Math.random() * 10);    // 0 - 9
+    const patch = Math.floor(Math.random() * 20);    // 0 - 19
+
+    const parts = [1, 2, 3][Math.floor(Math.random() * 3)];
+
+    document.getElementById('inputMajor').value = major;
+    document.getElementById('inputMinor').value = parts >= 2 ? minor : '';
+    document.getElementById('inputPatch').value = parts === 3 ? patch : '';
+
+    document.getElementById('leftMajor').value = '';
+    document.getElementById('leftMinor').value = '';
+    document.getElementById('leftPatch').value = '';
+    document.getElementById('rightMajor').value = '';
+    document.getElementById('rightMinor').value = '';
+    document.getElementById('rightPatch').value = '';
+    document.getElementById('result').innerText = '';
+    document.getElementById('explanation').innerText = '';
+  }
+</script>
+
+</body>
+</html>
