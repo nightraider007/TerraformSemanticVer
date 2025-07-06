@@ -44,7 +44,7 @@
     <li>Click <strong>“Show Left Bound”</strong> to see the minimum version (left bound) that your constraint includes.</li>
     <li>Enter the expected right bound (exclusive upper limit) by filling Major, Minor, and Patch in the right bound boxes.</li>
     <li>Click <strong>“Check Answer”</strong> to see if you got the right range.</li>
-    <li>If you get stuck, click <strong>“Show Answer”</strong> to reveal the correct right bound and a detailed explanation.</li>
+    <li>If you get stuck, click <strong>“Explain Answer”</strong> to reveal the correct right bound and a detailed explanation.</li>
     <li>Use <strong>“Generate Random”</strong> to try random versions and practice different scenarios.</li>
   </ol>
   <p>
@@ -76,7 +76,7 @@
     <input type="number" id="rightPatch" min="0" required />
   </div>
   <button type="submit">Check Answer</button>
-  <button type="button" onclick="showAnswer()">Show Answer</button>
+  <button type="button" onclick="showAnswer()">Explain Answer</button>
 </form>
 
 <div id="result" class="result"></div>
@@ -189,7 +189,7 @@
       document.getElementById('result').innerText = `✅ Correct! Right bound is < ${formatVersion(userRightBound)}`;
       document.getElementById('explanation').innerText = '';
     } else {
-      document.getElementById('result').innerText = `❌ Incorrect. Try again or click 'Show Answer'.`;
+      document.getElementById('result').innerText = `❌ Incorrect. Try again or click 'Expalain Answer'.`;
       document.getElementById('explanation').innerText = '';
     }
 
