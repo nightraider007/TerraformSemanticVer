@@ -74,7 +74,7 @@
   <input type="number" id="inputMajor" min="0" placeholder="Major" />
   <input type="number" id="inputMinor" min="0" placeholder="Minor" />
   <input type="number" id="inputPatch" min="0" placeholder="Patch" />
-  <button onclick="generateRandomVersion()">Generate Random</button>
+  <button class="row button:not(.full-width)" onclick="generateRandomVersion()">Generate Random</button>
   
 </div>
 
@@ -83,7 +83,7 @@
   <input type="number" id="leftMajor" readonly />
   <input type="number" id="leftMinor" readonly />
   <input type="number" id="leftPatch" readonly />
-  <button onclick="showLeftBound()">Show Left Bound</button>
+  <button class="row button:not(.full-width)" onclick="showLeftBound()">Show Left Bound</button>
 </div>
 
 <form id="rightBoundForm" style="display:none;" onsubmit="return checkRightBound(event)">
@@ -92,7 +92,7 @@
     <input type="number" id="rightMajor" min="0" required />
     <input type="number" id="rightMinor" min="0" required />
     <input type="number" id="rightPatch" min="0" required />
-     <button type="submit">Check Answer</button>
+     <button class="row button:not(.full-width)" type="submit">Check Answer</button>
   </div>
  
   <div class="row">
