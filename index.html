@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Terraform ~&gt; Version Range Quiz - Version 0.3.2 ~ Beta</title>
+
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -55,6 +56,7 @@
   }
 
   button {
+    /* Unified base style for all buttons */
     padding: 0.5rem 1rem;
     font-size: 1rem;
     border: 1px solid #ccc;
@@ -62,13 +64,17 @@
     background: #f0f0f0;
     cursor: pointer;
     transition: background 0.2s ease;
+    min-width: 140px;   /* consistent width for smaller buttons */
+    height: 40px;       /* consistent height */
+    flex-shrink: 0;     /* prevent shrinking in flex containers */
   }
 
   button:hover {
     background: #e0e0e0;
   }
 
-  .full-width {
+  button.full-width {
+    /* Distinct full-width button style */
     width: 100%;
     display: block;
     margin-top: 10px;
@@ -78,9 +84,12 @@
     color: white;
     border: none;
     border-radius: 4px;
+    min-width: auto;    /* reset min-width */
+    height: auto;       /* reset height */
+    flex-shrink: initial;
   }
 
-  .full-width:hover {
+  button.full-width:hover {
     background: #005f99;
   }
 
@@ -124,14 +133,6 @@
     text-decoration: underline;
   }
 
-  /* Buttons inside .row but not full-width */
-  .row button:not(.full-width) {
-    min-width: 140px;
-    height: 40px;
-    box-sizing: border-box;
-    flex-shrink: 0;
-  }
-
   /* Mobile responsiveness */
   @media (max-width: 600px) {
     .row {
@@ -142,6 +143,7 @@
     .row input,
     .row button {
       width: 100%;
+      min-width: auto;
     }
 
     .inline-label {
@@ -149,6 +151,10 @@
     }
   }
 </style>
+
+
+
+  
 
 </head>
 <body>
