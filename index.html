@@ -13,7 +13,7 @@
   .result { margin-top: 1rem; font-weight: bold; }
   .explanation { margin-top: 1rem; font-style: italic; color: #444; white-space: pre-wrap; }
   .row { margin-bottom: 1rem; }
-  .inline-label { display: inline-block; width: 70px; }
+  .inline-label { display: inline-block; width: 100px; }
   code { background: #f4f4f4; padding: 0 4px; border-radius: 3px; }
   a { color: #007acc; text-decoration: none; }
   a:hover { text-decoration: underline; }
@@ -24,6 +24,14 @@
   margin-top: 10px;
   padding: 10px;
   font-size: 1rem;
+}
+  /* Uniform button width for inline buttons */
+.row button:not(.full-width) {
+  min-width: 140px;
+  height: 38px;
+  padding: 0.5rem;
+  font-size: 1rem;
+  box-sizing: border-box;
 }
 
 </style>
